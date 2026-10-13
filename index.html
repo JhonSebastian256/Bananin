@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bananín · Gestión de Banano</title>
+
+  <!-- Fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS (framework) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Fraunces', 'serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            banana: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D', 400: '#F5C842', 500: '#E9B018', 600: '#B8860B', 700: '#8A6508' },
+            ink: { DEFAULT: '#1F2433', soft: '#5B6275', line: '#E4E1D6' },
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Chart.js para los mini gráficos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body class="bg-banana-50 font-sans text-ink antialiased">
+  <div class="min-h-screen lg:flex">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="lg:w-64 lg:shrink-0 lg:h-screen lg:sticky lg:top-0 p-4">
+      <nav class="h-full bg-white border border-ink-line rounded-2xl p-4 shadow-sm flex lg:flex-col gap-2 overflow-x-auto" aria-label="Navegación principal">
+        <div class="hidden lg:flex items-center gap-2 px-3 pt-2 pb-5">
+          <span class="text-2xl" aria-hidden="true">🍌</span>
+          <span class="font-display text-xl font-bold">Bananín</span>
+        </div>
+
+        <a href="#inicio" data-nav="inicio" class="nav-link">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5Z"/></svg>
+          Inicio
+        </a>
+        <a href="#historial" data-nav="historial" class="nav-link">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 2M21 12a9 9 0 1 1-3-6.7M21 4v4h-4"/></svg>
+          Historial
+        </a>
+        <a href="#bananin" data-nav="bananin" class="nav-link">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12c0 4.4-4 8-9 8-1.2 0-2.3-.2-3.3-.5L4 21l1.4-4.2C4.2 15.5 3 13.9 3 12c0-4.4 4-8 9-8s9 3.6 9 8Z"/></svg>
+          Bananín
+        </a>
+      </nav>
+    </aside>
+
+    <!-- ============ CONTENIDO ============ -->
+    <main class="flex-1 min-w-0 p-4 lg:p-8 lg:pl-4">
+
+      <!-- ---------- INICIO ---------- -->
+      <section id="view-inicio" class="view" aria-labelledby="t-inicio">
+        <header class="flex items-start justify-between gap-4 mb-8">
+          <h1 id="t-inicio" class="font-display text-4xl font-bold">Inicio</h1>
+          <span class="chip">Gestión de Banano</span>
+        </header>
+
+        <!-- Tarjetas KPI -->
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <article class="card">
+            <p class="label">Lectura actual</p>
+            <div class="flex items-center gap-4 mt-2">
+              <div id="swatch" class="w-16 h-16 rounded-xl border border-ink-line shadow-inner"></div>
+              <div>
+                <p class="font-display text-3xl font-bold leading-none" id="kpi-lectura">R 214</p>
+                <p class="text-xs text-ink-soft mt-1" id="kpi-hace">hace 12 s</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <p class="label">Etapa estimada</p>
+            <p class="font-display text-3xl font-bold mt-2" id="kpi-etapa">Etapa 3 de 4</p>
+            <div class="flex gap-1.5 mt-3" id="stage-bar" aria-hidden="true"></div>
+            <p class="text-sm text-ink-soft mt-2" id="kpi-etapa-nombre">Maduro</p>
+          </article>
+
+          <article class="card">
+            <p class="label">Días restantes</p>
+            <p class="font-display text-3xl font-bold mt-2" id="kpi-dias">≈ 3 días</p>
+            <p class="text-xs text-ink-soft mt-3">Estimación de vida útil</p>
+          </article>
+
+          <article class="card">
+            <p class="label">Destino recomendado</p>
+            <p class="font-display text-3xl font-bold mt-2" id="kpi-destino">Vender local</p>
+            <span class="chip mt-3 inline-block">Validado por reglas</span>
+          </article>
+        </div>
+
+        <!-- Justificación + Historial -->
+        <div class="grid gap-4 mt-4 lg:grid-cols-5">
+          <article class="card lg:col-span-3">
+            <h2 class="font-display text-2xl font-bold">Justificación de la recomendación</h2>
+            <p class="mt-4 text-lg leading-relaxed" id="justificacion">
+              El banano está en etapa 3 y le quedan unos 3 días de vida útil. Un transporte largo supera ese tiempo, por lo que se recomienda venderlo en el mercado local.
+            </p>
+            <div class="flex flex-wrap gap-2 mt-5">
+              <span class="chip" id="chip-conf">Confianza: 82 %</span>
+              <span class="chip" id="chip-valor">Valor estimado: $ ___ COP/kg</span>
+            </div>
+          </article>
+
+          <article class="card lg:col-span-2">
+            <h2 class="font-display text-2xl font-bold">Historial reciente</h2>
+            <div class="chart-box mt-4"><canvas id="chart-mini"></canvas></div>
+            <a href="#historial" class="inline-block mt-3 text-sm text-banana-700 hover:underline">Ver historial completo</a>
+          </article>
+        </div>
+      </section>
+
+      <!-- ---------- HISTORIAL ---------- -->
+      <section id="view-historial" class="view" hidden aria-labelledby="t-historial">
+        <header class="flex items-start justify-between gap-4 mb-8">
+          <h1 id="t-historial" class="font-display text-4xl font-bold">Historial</h1>
+          <span class="chip">Gestión de Banano</span>
+        </header>
+
+        <div class="grid gap-6 lg:grid-cols-2">
+          <div class="card max-h-[28rem] overflow-y-auto scroll-soft" id="lista-historial" tabindex="0" aria-label="Lecturas por día"></div>
+
+          <div class="flex flex-col items-center gap-6">
+            <div class="card w-full">
+              <div class="chart-box tall"><canvas id="chart-hist"></canvas></div>
+            </div>
+            <button id="btn-informe" class="btn-primary">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>
+              Descargar Informe
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- BANANÍN (CHAT) ---------- -->
+      <section id="view-bananin" class="view" hidden aria-labelledby="t-bananin">
+        <div class="flex flex-col h-[calc(100vh-4rem)] max-w-4xl">
+          <header class="flex items-start justify-between gap-4 mb-6">
+            <h1 id="t-bananin" class="font-display text-4xl font-bold tracking-tight">BANANIN</h1>
+            <span class="chip">Gestión de Banano</span>
+          </header>
+
+          <div id="chat-log" class="flex-1 overflow-y-auto space-y-4 pr-2 scroll-soft" aria-live="polite"></div>
+
+          <form id="chat-form" class="flex gap-3 pt-4" autocomplete="off">
+            <label for="chat-input" class="sr-only">Escribe tu mensaje</label>
+            <input id="chat-input" type="text" placeholder="Escribe tu pregunta…"
+                   class="flex-1 rounded-full border-2 border-ink px-6 py-3 text-lg bg-white focus:outline-none focus:ring-4 focus:ring-banana-300" />
+            <button type="submit" class="btn-send">Enviar</button>
+          </form>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
